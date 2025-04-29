@@ -1,17 +1,17 @@
-# node Express
+# 教师评分系统后台
 
-教师评分系统后台
+> _一个基于 Express 的教师评价后台_
 
 ## ✨ 功能特性
 
-- 功能点 1（例如：`JWT 身份验证`）
-- 功能点 2（例如：`Mysql 数据增删改查`）
-- 功能点 3（例如：`Swagger 文档支持`）
+- 功能点 1 - JWT 身份验证
+- 功能点 2 - Mysql 数据增删改查
+- 功能点 3 - Swagger 文档支持
 
 ## 🚀 快速开始
 
-node app.js
-nodemon app.js
+- node app.js
+- nodemon app.js
 
 ### 前置条件
 
