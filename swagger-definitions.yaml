@@ -1,0 +1,407 @@
+openapi: 3.0.0
+
+info:
+  title: "Express API with Swagger"
+  version: "1.0.0"
+  description: "API documentation using Swagger"
+
+servers:
+  - url: "http://localhost:3000/api"
+
+tags:
+  - name: "user"
+    description: "用户相关操作"
+  - name: "userInfo"
+    description: "用户信息相关操作"
+  - name: "teachers"
+    description: "教师管理"
+  - name: "teacherInfo"
+    description: "教师信息相关操作"
+  - name: "ratings"
+    description: "评分相关操作"
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: "输入格式：Bearer <token>"
+  schemas:
+    User:
+      type: object
+      properties:
+        # id:
+        #   type: integer
+        #   description: 用户ID（新增时不用传）
+        username:
+          type: string
+          example: admin
+          description: 用户名
+        password:
+          type: string
+          example: 12345678
+          description: 密码为6-12位的非空字符
+      required: [username, password]
+    Teacher:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: ""
+          description: 教师ID（新增时不用传）
+        name:
+          type: string
+          example: ""
+          description: 教师姓名
+        faculty:
+          type: string
+          example: ""
+          description: 所属学院
+        title:
+          type: string
+          example: ""
+          description: 职称
+        courses:
+          type: string
+          example: ""
+          description: 课程
+        introduction:
+          type: string
+          example: ""
+          description: 简介
+        avatar:
+          type: string
+          example: ""
+          description: 头像
+        rating:
+          type: number
+          example: ""
+          description: 总评分
+        rating_count:
+          type: number
+          example: ""
+          description: 评分人数
+        reviews_count:
+          type: number
+          example: ""
+          description: 评论条数
+      required: [name, faculty, title]
+    Rating:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: ""
+          description: 评分ID（新增时不用传）
+        date:
+          type: string
+          example: ""
+          description: 日期(格式：YYYY-MM-DD HH:MM:SS)
+        teacher_id:
+          type: integer
+          example: ""
+          description: 教师ID
+        rating:
+          type: integer
+          example: ""
+          description: 评分(1-5整数)
+        content:
+          type: string
+          example: ""
+          description: 评价
+      required: [teacher_id, rating]
+
+paths:
+  /user/register:
+    post:
+      summary: 用户注册
+      tags: [user]
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/User"
+      responses:
+        "200":
+          description: 操作成功
+        "400":
+          description: 操作失败
+
+  /user/login:
+    post:
+      summary: 用户登录
+      tags: [user]
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/User"
+      responses:
+        "200":
+          description: 操作成功
+        "400":
+          description: 操作失败
+
+  /user/logout:
+    get:
+      summary: 用户退出
+      tags: [user]
+      responses:
+        "200":
+          description: 操作成功
+        "400":
+          description: 操作失败
+
+  /userInfo/getInfo:
+    get:
+      summary: 获取用户信息
+      tags: [userInfo]
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: 操作成功
+        "400":
+          description: 操作失败
+
+  /userInfo/updatePwd:
+    post:
+      summary: 更新用户密码
+      tags: [userInfo]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                oldPwd:
+                  type: string
+                  example: ""
+                  description: 旧密码
+                newPwd:
+                  type: string
+                  example: ""
+                  description: 密码为6-12位的非空字符，新旧密码不能相同
+              required: [oldPwd, newPwd]
+      responses:
+        "200":
+          description: 操作成功
+        "400":
+          description: 操作失败
+
+  /teachers/add:
+    post:
+      summary: 新增教师
+      tags: [teachers]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/Teacher"
+      responses:
+        "200":
+          description: 操作成功
+        "400":
+          description: 操作失败
+
+  /teachers/update:
+    post:
+      summary: 修改教师
+      tags: [teachers]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/Teacher"
+      responses:
+        "200":
+          description: 操作成功
+        "400":
+          description: 操作失败
+
+  /teachers/delete:
+    get:
+      summary: 删除教师
+      tags: [teachers]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: id
+          required: true
+          schema:
+            type: integer
+            example: ""
+          description: 教师ID
+      responses:
+        "200":
+          description: 操作成功
+        "400":
+          description: 操作失败
+
+  /teacherInfo/list:
+    get:
+      summary: 获取教师列表
+      tags: [teacherInfo]
+      parameters:
+        - in: query
+          name: page
+          required: true
+          schema:
+            type: integer
+            example: ""
+          description: 页码
+        - in: query
+          name: pagesize
+          required: true
+          schema:
+            type: integer
+            example: ""
+          description: 每页条数
+        - in: query
+          name: order
+          required: true
+          schema:
+            type: integer
+            example: ""
+          description: 排序方式:1.总评分 2.评分人数 3.名称首字母
+        - in: query
+          name: keywords
+          required: false
+          schema:
+            type: string
+            example: ""
+          description: 名称搜索关键词
+      responses:
+        "200":
+          description: 操作成功
+        "400":
+          description: 操作失败
+
+  /teacherInfo/getDetailById:
+    get:
+      summary: 根据教师ID查询
+      tags: [teacherInfo]
+      parameters:
+        - in: query
+          name: id
+          required: true
+          schema:
+            type: integer
+            example: ""
+          description: 教师ID
+      responses:
+        "200":
+          description: 操作成功
+        "400":
+          description: 操作失败
+
+  /ratings/add:
+    post:
+      summary: 新增评分
+      tags: [ratings]
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/Rating"
+      responses:
+        "200":
+          description: 操作成功
+        "400":
+          description: 操作失败
+
+  /ratings/getListByTeacherId:
+    get:
+      summary: 根据教师ID获取评论列表
+      tags: [ratings]
+      parameters:
+        - in: query
+          name: id
+          required: true
+          schema:
+            type: integer
+            example: ""
+          description: 教师ID
+        - in: query
+          name: page
+          required: true
+          schema:
+            type: integer
+            example: ""
+          description: 页码
+        - in: query
+          name: pagesize
+          required: true
+          schema:
+            type: integer
+            example: ""
+          description: 每页条数
+        - in: query
+          name: order
+          required: true
+          schema:
+            type: string
+            example: ""
+          description: 排序方式:1.最新评分 2.最高评分 3.最低评分
+      responses:
+        "200":
+          description: 操作成功
+        "400":
+          description: 操作失败
+
+  /ratings/getListByCount:
+    get:
+      summary: 根据数量、教师ID获取最新评分列表
+      tags: [ratings]
+      parameters:
+        - in: query
+          name: teacher_id
+          required: true
+          schema:
+            type: integer
+            example: ""
+          description: 教师ID
+        - in: query
+          name: count
+          required: true
+          schema:
+            type: integer
+            example: ""
+          description: 数量
+      responses:
+        "200":
+          description: 操作成功
+        "400":
+          description: 操作失败
+
+  /ratings/getRatingDistribution:
+    get:
+      summary: 根据教师ID获取评分分布情况
+      tags: [ratings]
+      parameters:
+        - in: query
+          name: id
+          required: true
+          schema:
+            type: integer
+            example: ""
+          description: 教师ID
+      responses:
+        "200":
+          description: 操作成功
+        "400":
+          description: 操作失败
