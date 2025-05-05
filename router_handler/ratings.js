@@ -103,8 +103,6 @@ exports.getRatingDistribution = (req, res) => {
     );
     const totalCount = results.reduce((acc, item) => acc + item.count, 0);
     const rating = Number((total / totalCount).toFixed(1));
-    // 计算评分人数
-    const rating_count = results.reduce((acc, item) => acc + item.count, 0);
 
     res.send({
       status: 0,
@@ -112,7 +110,7 @@ exports.getRatingDistribution = (req, res) => {
       data: {
         starList,
         rating,
-        rating_count,
+        rating_count: totalCount,
       },
     });
   });

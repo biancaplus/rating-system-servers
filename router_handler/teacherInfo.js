@@ -1,5 +1,14 @@
 const db = require("../db/index");
 
+function isJsonString(str) {
+  try {
+    JSON.parse(str);
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
 // 查询
 exports.getList = (req, res) => {
   const {
@@ -57,7 +66,9 @@ LIMIT ?,?;`,
             if (teacher.recent_ratings) {
               const ratings = JSON.parse(teacher.recent_ratings);
               const ratingsObj = ratings.map((rating) => {
-                const ratingObj = JSON.parse(rating);
+                const ratingObj = isJsonString(rating)
+                  ? JSON.parse(rating)
+                  : rating;
                 return {
                   id: ratingObj.id,
                   date: ratingObj.date,
