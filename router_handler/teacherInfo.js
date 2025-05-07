@@ -26,8 +26,10 @@ exports.getList = (req, res) => {
       if (err) return res.cc(err);
       const total = results[0]["count(*)"];
 
-      let orderBy = "t.rating DESC";
-      if (order == 2) {
+      let orderBy = "t.id DESC";
+      if (order == 1) {
+        orderBy = "t.rating DESC";
+      } else if (order == 2) {
         orderBy = "t.rating_count DESC";
       } else if (order == 3) {
         orderBy = "LEFT(CONVERT(name USING gbk) COLLATE gbk_chinese_ci, 1)";

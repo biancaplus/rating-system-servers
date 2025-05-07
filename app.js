@@ -10,18 +10,8 @@ const swaggerDefinition = yaml.load(
   fs.readFileSync("./swagger-definitions.yaml", "utf8")
 );
 
-// 导入并配置cors中间件，需要配置在路由之前(浏览器有版本要求IE10+、Chrome4+、FireFox3.5+)
-// const cors = require("cors");
-// app.use(
-//   cors({
-//     origin: "http://localhost:3000", //アクセス許可するオリジン
-//     credentials: true, //レスポンスヘッダーにAccess-Control-Allow-Credentials追加
-//     optionsSuccessStatus: 200, //レスポンスstatusを200に設定
-//   })
-// );
-
 // 配置解析表单数据的中间件，解析application/x-www-form-urlencoded格式的表单数据
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ limit: "3mb", extended: false }));
 
 // 响应数据的中间件(封装res.cc函数，在路由之前，也要在jwt解析之前，否则报错获取不到该函数)
 app.use((req, res, next) => {
@@ -40,7 +30,7 @@ app.use(
     path: [
       /^\/api\/user\//,
       /^\/api\/teacherInfo\//,
-      /^\/api\/ratings\//,
+      /^\/api\/ratingInfo\//,
       /^\/swagger\//,
     ], // 排除开头的路由
   })
@@ -66,13 +56,35 @@ app.use("/api/teacherInfo", teacherInfoRouter);
 const ratingsRouter = require("./router/ratings");
 app.use("/api/ratings", ratingsRouter);
 
+// 评分信息路由模块
+const ratingInfoRouter = require("./router/ratingInfo");
+app.use("/api/ratingInfo", ratingInfoRouter);
+
+// if (process.env.ENABLE_REGISTRATION === "true") {
+//   const registrationRouter = require("./router/registration");
+//   app.use("/api/registration", registrationRouter);
+// }
+
 // 定义错误级别的中间件
 app.use((err, req, res, next) => {
-  // 身份验证失败
-  if (err.name == "UnauthorizedError") return res.cc("身份认证失败！");
+  // Token 过期
+  if (err.name === "UnauthorizedError" && err.message.includes("expired")) {
+    return res
+      .status(401)
+      .json({ code: 401, message: "Token 已过期，请重新登录" });
+  }
 
-  // 未知错误
-  res.cc(err);
+  // 无效 Token（格式错误、伪造 Token 等）
+  if (err.name === "UnauthorizedError") {
+    return res
+      .status(401)
+      .json({ code: 401, message: "无效的Token，请重新登录" });
+  }
+
+  // 其他错误
+  res
+    .status(500)
+    .json({ code: 500, message: "服务器内部错误", error: err.message });
 });
 
 // Swagger 配置

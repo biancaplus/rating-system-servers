@@ -41,3 +41,6 @@ debug/
 # 数据库备份
 /db_backup
 
+*.pem
+*.pem.txt
+*.key

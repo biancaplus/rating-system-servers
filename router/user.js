@@ -13,10 +13,8 @@ const validate = require("../schema/validate");
  * @returns {object} 200 - {code:200,msg:'ok',data:null}
  * @returns {Error}  default - {code:500,msg:'error',data:null}
  */
-router.post("/register", validate(register_login_schema), userHandler.register);
+router.post("/register", userHandler.register);
 
-router.post("/login", validate(register_login_schema), userHandler.login);
-
-router.get("/logout", userHandler.logout);
+router.post("/login", userHandler.login);
 
 module.exports = router;

@@ -19,6 +19,8 @@ tags:
     description: "教师信息相关操作"
   - name: "ratings"
     description: "评分相关操作"
+  - name: "ratingInfo"
+    description: "评分信息相关操作"
 
 components:
   securitySchemes:
@@ -122,7 +124,13 @@ paths:
         content:
           application/x-www-form-urlencoded:
             schema:
-              $ref: "#/components/schemas/User"
+              type: object
+              properties:
+                data:
+                  type: string
+                  example: ""
+                  description: 加密后的数据{"username":"用户名","password":"密码"}
+              # $ref: "#/components/schemas/User"
       responses:
         "200":
           description: 操作成功
@@ -138,17 +146,13 @@ paths:
         content:
           application/x-www-form-urlencoded:
             schema:
-              $ref: "#/components/schemas/User"
-      responses:
-        "200":
-          description: 操作成功
-        "400":
-          description: 操作失败
-
-  /user/logout:
-    get:
-      summary: 用户退出
-      tags: [user]
+              type: object
+              properties:
+                data:
+                  type: string
+                  example: ""
+                  description: 加密后的数据{"username":"用户名","password":"密码"}
+              # $ref: "#/components/schemas/User"
       responses:
         "200":
           description: 操作成功
@@ -180,15 +184,19 @@ paths:
             schema:
               type: object
               properties:
-                oldPwd:
+                data:
                   type: string
                   example: ""
-                  description: 旧密码
-                newPwd:
-                  type: string
-                  example: ""
-                  description: 密码为6-12位的非空字符，新旧密码不能相同
-              required: [oldPwd, newPwd]
+                  description: 加密后的数据{"oldPwd":"旧密码","newPwd":"新密码"}
+                # oldPwd:
+                #   type: string
+                #   example: ""
+                #   description: 旧密码
+                # newPwd:
+                #   type: string
+                #   example: ""
+                #   description: 密码为6-12位的非空字符，新旧密码不能相同
+              required: [data]
       responses:
         "200":
           description: 操作成功
@@ -276,7 +284,7 @@ paths:
           schema:
             type: integer
             example: ""
-          description: 排序方式:1.总评分 2.评分人数 3.名称首字母
+          description: 排序方式:默认以id排序，1.总评分 2.评分人数 3.名称首字母
         - in: query
           name: keywords
           required: false
@@ -324,10 +332,10 @@ paths:
         "400":
           description: 操作失败
 
-  /ratings/getListByTeacherId:
+  /ratingInfo/getListByTeacherId:
     get:
       summary: 根据教师ID获取评论列表
-      tags: [ratings]
+      tags: [ratingInfo]
       parameters:
         - in: query
           name: id
@@ -363,10 +371,10 @@ paths:
         "400":
           description: 操作失败
 
-  /ratings/getListByCount:
+  /ratingInfo/getListByCount:
     get:
       summary: 根据数量、教师ID获取最新评分列表
-      tags: [ratings]
+      tags: [ratingInfo]
       parameters:
         - in: query
           name: teacher_id
@@ -388,10 +396,10 @@ paths:
         "400":
           description: 操作失败
 
-  /ratings/getRatingDistribution:
+  /ratingInfo/getRatingDistribution:
     get:
       summary: 根据教师ID获取评分分布情况
-      tags: [ratings]
+      tags: [ratingInfo]
       parameters:
         - in: query
           name: id
